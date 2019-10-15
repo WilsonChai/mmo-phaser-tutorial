@@ -280,7 +280,7 @@ class WorldScene extends Phaser.Scene {
           enemy.body.setVelocityY(50);
           break;
         case 4:
-          enemy.body.setVelocityY(50);
+          enemy.body.setVelocityY(-50);
           break;
         default:
           enemy.body.setVelocityX(50);
