@@ -1,19 +1,20 @@
+/* eslint-disable max-classes-per-file */
 const inputMessage = document.getElementById('inputMessage');
 const messages = document.getElementById('messages');
 
-window.addEventListener('keydown', event => {
+window.addEventListener('keydown', (event) => {
   if (event.which === 13) {
     sendMessage();
   }
   if (event.which === 32) {
     if (document.activeElement === inputMessage) {
-      inputMessage.value = inputMessage.value + ' ';
+      inputMessage.value += ' ';
     }
   }
 });
 
 function sendMessage() {
-  let message = inputMessage.value;
+  const message = inputMessage.value;
   if (message) {
     inputMessage.value = '';
     $.ajax({
@@ -21,13 +22,13 @@ function sendMessage() {
       url: '/submit-chatline',
       data: {
         message,
-        refreshToken: getCookie('refreshJwt')
+        refreshToken: getCookie('refreshJwt'),
       },
-      success: function(data) {},
-      error: function(xhr) {
+      success(data) {},
+      error(xhr) {
         console.log(xhr);
-      }
-    })
+      },
+    });
   }
 }
 
@@ -40,7 +41,7 @@ class BootScene extends Phaser.Scene {
   constructor() {
     super({
       key: 'BootScene',
-      active: true
+      active: true,
     });
   }
 
@@ -52,7 +53,7 @@ class BootScene extends Phaser.Scene {
     // our two characters
     this.load.spritesheet('player', 'assets/RPG_assets.png', {
       frameWidth: 16,
-      frameHeight: 16
+      frameHeight: 16,
     });
 
     this.load.image('golem', 'assets/images/coppergolem.png');
@@ -71,7 +72,7 @@ class BootScene extends Phaser.Scene {
 class WorldScene extends Phaser.Scene {
   constructor() {
     super({
-      key: 'WorldScene'
+      key: 'WorldScene',
     });
   }
 
@@ -92,36 +93,36 @@ class WorldScene extends Phaser.Scene {
     this.createEnemies();
 
     // listen for web socket events
-    this.socket.on('currentPlayers', function (players) {
-      Object.keys(players).forEach(function (id) {
+    this.socket.on('currentPlayers', (players) => {
+      Object.keys(players).forEach((id) => {
         if (players[id].playerId === this.socket.id) {
           this.createPlayer(players[id]);
         } else {
           this.addOtherPlayers(players[id]);
         }
-      }.bind(this));
-    }.bind(this));
+      });
+    });
 
-    this.socket.on('newPlayer', function (playerInfo) {
+    this.socket.on('newPlayer', (playerInfo) => {
       this.addOtherPlayers(playerInfo);
-    }.bind(this));
+    });
 
-    this.socket.on('disconnect', function (playerId) {
-      this.otherPlayers.getChildren().forEach(function (player) {
+    this.socket.on('disconnect', (playerId) => {
+      this.otherPlayers.getChildren().forEach((player) => {
         if (playerId === player.playerId) {
           player.destroy();
         }
-      }.bind(this));
-    }.bind(this));
+      });
+    });
 
-    this.socket.on('playerMoved', function (playerInfo) {
-      this.otherPlayers.getChildren().forEach(function (player) {
+    this.socket.on('playerMoved', (playerInfo) => {
+      this.otherPlayers.getChildren().forEach((player) => {
         if (playerInfo.playerId === player.playerId) {
           player.flipX = playerInfo.flipX;
           player.setPosition(playerInfo.x, playerInfo.y);
         }
-      }.bind(this));
-    }.bind(this));
+      });
+    });
 
     this.socket.on('new message', (data) => {
       const usernameSpan = document.createElement('span');
@@ -146,11 +147,11 @@ class WorldScene extends Phaser.Scene {
   createMap() {
     // create the map
     this.map = this.make.tilemap({
-      key: 'map'
+      key: 'map',
     });
 
     // first parameter is the name of the tilemap in tiled
-    var tiles = this.map.addTilesetImage('spritesheet', 'tiles', 16, 16, 1, 2);
+    const tiles = this.map.addTilesetImage('spritesheet', 'tiles', 16, 16, 1, 2);
 
     // creating the layers
     this.map.createStaticLayer('Grass', tiles, 0, 0);
@@ -166,38 +167,38 @@ class WorldScene extends Phaser.Scene {
     this.anims.create({
       key: 'left',
       frames: this.anims.generateFrameNumbers('player', {
-        frames: [1, 7, 1, 13]
+        frames: [1, 7, 1, 13],
       }),
       frameRate: 10,
-      repeat: -1
+      repeat: -1,
     });
 
     // animation with key 'right'
     this.anims.create({
       key: 'right',
       frames: this.anims.generateFrameNumbers('player', {
-        frames: [1, 7, 1, 13]
+        frames: [1, 7, 1, 13],
       }),
       frameRate: 10,
-      repeat: -1
+      repeat: -1,
     });
 
     this.anims.create({
       key: 'up',
       frames: this.anims.generateFrameNumbers('player', {
-        frames: [2, 8, 2, 14]
+        frames: [2, 8, 2, 14],
       }),
       frameRate: 10,
-      repeat: -1
+      repeat: -1,
     });
 
     this.anims.create({
       key: 'down',
       frames: this.anims.generateFrameNumbers('player', {
-        frames: [0, 6, 0, 12]
+        frames: [0, 6, 0, 12],
       }),
       frameRate: 10,
-      repeat: -1
+      repeat: -1,
     });
   }
 
@@ -246,12 +247,12 @@ class WorldScene extends Phaser.Scene {
   createEnemies() {
     // where the enemies will be
     this.spawns = this.physics.add.group({
-      classType: Phaser.GameObjects.Sprite
+      classType: Phaser.GameObjects.Sprite,
     });
-    for (var i = 0; i < 20; i++) {
+    for (let i = 0; i < 20; i++) {
       const location = this.getValidLocation();
       // parameters are x, y, width, height
-      var enemy = this.spawns.create(location.x, location.y, this.getEnemySprite());
+      const enemy = this.spawns.create(location.x, location.y, this.getEnemySprite());
       enemy.body.setCollideWorldBounds(true);
       enemy.body.setImmovable();
     }
@@ -261,15 +262,15 @@ class WorldScene extends Phaser.Scene {
       delay: 3000,
       callback: this.moveEnemies,
       callbackScope: this,
-      loop: true
+      loop: true,
     });
   }
 
-  moveEnemies () {
+  moveEnemies() {
     this.spawns.getChildren().forEach((enemy) => {
       const randNumber = Math.floor((Math.random() * 4) + 1);
 
-      switch(randNumber) {
+      switch (randNumber) {
         case 1:
           enemy.body.setVelocityX(50);
           break;
@@ -294,13 +295,14 @@ class WorldScene extends Phaser.Scene {
   }
 
   getEnemySprite() {
-    var sprites = ['golem', 'ent', 'demon', 'worm', 'wolf'];
+    const sprites = ['golem', 'ent', 'demon', 'worm', 'wolf'];
     return sprites[Math.floor(Math.random() * sprites.length)];
   }
 
   getValidLocation() {
-    var validLocation = false;
-    var x, y;
+    let validLocation = false;
+    let x; let
+      y;
     while (!validLocation) {
       x = Phaser.Math.RND.between(0, this.physics.world.bounds.width);
       y = Phaser.Math.RND.between(0, this.physics.world.bounds.height);
@@ -380,9 +382,9 @@ class WorldScene extends Phaser.Scene {
       }
 
       // emit player movement
-      var x = this.container.x;
-      var y = this.container.y;
-      var flipX = this.player.flipX;
+      const { x } = this.container;
+      const { y } = this.container;
+      const { flipX } = this.player;
       if (this.container.oldPosition && (x !== this.container.oldPosition.x || y !== this.container.oldPosition.y || flipX !== this.container.oldPosition.flipX)) {
         this.socket.emit('playerMovement', { x, y, flipX });
       }
@@ -390,13 +392,13 @@ class WorldScene extends Phaser.Scene {
       this.container.oldPosition = {
         x: this.container.x,
         y: this.container.y,
-        flipX: this.player.flipX
+        flipX: this.player.flipX,
       };
     }
   }
 }
 
-var config = {
+const config = {
   type: Phaser.AUTO,
   parent: 'content',
   width: 320,
@@ -407,15 +409,14 @@ var config = {
     default: 'arcade',
     arcade: {
       gravity: {
-        y: 0
+        y: 0,
       },
-      debug: false // set to true to view zones
-    }
+      debug: false, // set to true to view zones
+    },
   },
   scene: [
     BootScene,
-    WorldScene
-  ]
+    WorldScene,
+  ],
 };
-var game = new Phaser.Game(config);
-
+const game = new Phaser.Game(config);

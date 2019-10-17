@@ -8,11 +8,11 @@ const UserModel = require('../models/userModel');
 passport.use('signup', new localStrategy({
   usernameField: 'email',
   passwordField: 'password',
-  passReqToCallback: true
+  passReqToCallback: true,
 }, async (req, email, password, done) => {
   try {
     const { name } = req.body;
-    const user = await UserModel.create({ email, password, name});
+    const user = await UserModel.create({ email, password, name });
     return done(null, user);
   } catch (error) {
     done(error);
@@ -22,7 +22,7 @@ passport.use('signup', new localStrategy({
 // handle user login
 passport.use('login', new localStrategy({
   usernameField: 'email',
-  passwordField: 'password'
+  passwordField: 'password',
 }, async (email, password, done) => {
   try {
     const user = await UserModel.findOne({ email });
@@ -42,11 +42,11 @@ passport.use('login', new localStrategy({
 // verify token is valid
 passport.use(new JWTstrategy({
   secretOrKey: 'top_secret',
-  jwtFromRequest: function (req) {
+  jwtFromRequest(req) {
     let token = null;
-    if (req && req.cookies) token = req.cookies['jwt'];
+    if (req && req.cookies) token = req.cookies.jwt;
     return token;
-  }
+  },
 }, async (token, done) => {
   try {
     return done(null, token.user);
